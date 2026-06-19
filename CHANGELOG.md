@@ -17,6 +17,12 @@ estrategia multi-tenant Shared Database + TenantId (ver ADR-001).
 
 ---
 
-> Próxima entrada esperada: implementación de la entidad `Tenant` y el esqueleto
-> multi-tenant. **Escribir esa entrada cuando el código exista y compile, no
-> antes.**
+## 2026-06-19 — Incremento 1: esqueleto multi-tenant
+
+Solución .NET 8 `CatalogoMultiTenant` con cuatro proyectos (Domain, Application,
+Infrastructure, WebApi). Entidad `Tenant` (Id, Name, Slug único, CreatedAtUtc),
+`AppDbContext` mínimo y migración inicial `InitialCreate`. `dotnet build` en verde,
+0 warnings. Deuda declarada: connection string de desarrollo hardcodeada en
+DesignTimeDbContextFactory, a resolver en Incremento 2 con variables de entorno.
+
+---
