@@ -8,9 +8,13 @@
 
 ## Qué es
 
-Una plataforma SaaS multi-tenant para que comercios chicos y medianos tengan su
-catálogo online con panel de administración propio, sin depender de un
-desarrollador para cada cambio.
+Una plataforma SaaS multi-tenant para que comercios de distintos rubros
+digitalicen su catálogo y proceso de ventas con panel de administración propio,
+sin depender de un desarrollador para cada cambio.
+
+La plataforma sirve a perfumerías, tiendas de ropa, ferreterías, dietéticas,
+librerías y otros comercios sin modificar el código base: únicamente mediante
+configuración y los módulos disponibles.
 
 El primer tenant que valida la plataforma es **Lore Perfumería**. El primer
 módulo disponible es un **catálogo de productos con carrito que deriva el pedido
@@ -32,7 +36,8 @@ pedidos que les llegan listos por el canal que ya usan (WhatsApp).
 
 ## Quién es el cliente
 
-Comercios chicos y medianos (perfumerías, distribuidoras, locales de barrio) que:
+Comercios chicos y medianos de distintos rubros (perfumerías, tiendas de ropa,
+ferreterías, dietéticas, librerías, distribuidoras) que:
 - ya venden de forma informal (WhatsApp/Instagram),
 - quieren presencia online sin complejidad,
 - prefieren coordinar pago y envío ellos mismos,
@@ -42,7 +47,7 @@ Comercios chicos y medianos (perfumerías, distribuidoras, locales de barrio) qu
 
 ## Visión a 5 años
 
-Pasar de "le hago un catálogo a un cliente" a **una plataforma donde sumar un
+Pasar de "le armo la solución a un cliente" a **una plataforma donde sumar un
 cliente nuevo es configurar un tenant**, no empezar de cero. El core hecho una
 vez, vendido muchas veces. La base técnica de una software factory propia.
 
