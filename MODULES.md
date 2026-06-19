@@ -29,7 +29,7 @@
 
 | Módulo    | Estado       | Notas                                              |
 |-----------|--------------|----------------------------------------------------|
-| Catálogo  | **Next**     | Productos, categorías, marcas, imágenes. Panel admin + carrito a WhatsApp. Primer módulo, para el tenant Lore. Depende del core multi-tenant. |
+| Catálogo  | **Next**     | Productos, categorías, marcas, imágenes. Panel admin + carrito a WhatsApp. Primer módulo de la plataforma. Depende del core multi-tenant. |
 
 ---
 

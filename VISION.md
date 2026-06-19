@@ -12,8 +12,9 @@ Una plataforma SaaS multi-tenant para que comercios chicos y medianos tengan su
 catálogo online con panel de administración propio, sin depender de un
 desarrollador para cada cambio.
 
-El primer cliente (tenant) es **Lore Perfumería**. El primer módulo es un
-**catálogo con carrito que deriva el pedido a WhatsApp**.
+El primer tenant que valida la plataforma es **Lore Perfumería**. El primer
+módulo disponible es un **catálogo de productos con carrito que deriva el pedido
+a WhatsApp**.
 
 ---
 
