@@ -27,6 +27,17 @@ DesignTimeDbContextFactory, a resolver en Incremento 2 con variables de entorno.
 
 ---
 
+## 2026-06-19 — Incremento 2: abstracción del tenant del request
+
+`ITenantContext` en Application (TenantId/TenantSlug del request actual),
+clase base `TenantedEntity` en Domain (TenantId para entidades de negocio;
+Tenant no la hereda), y `TenantContextService` en Infrastructure que lee los
+claims vía IHttpContextAccessor. `dotnet build` en verde, 0 warnings. Deuda
+declarada: sin JWT, TenantId/TenantSlug son null y no hay aislamiento real
+todavía; se resuelve en Incremento 3.
+
+---
+
 ## 2026-06-19 — Incremento 3: autenticación JWT con tenant_id
 
 Entidad `User` (Email único global, PasswordHash, TenantId; no hereda de
