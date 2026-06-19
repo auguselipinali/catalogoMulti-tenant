@@ -1,4 +1,6 @@
+using CatalogoMultiTenant.Application.Common.Interfaces;
 using CatalogoMultiTenant.Infrastructure.Persistence;
+using CatalogoMultiTenant.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,6 +15,9 @@ public static class DependencyInjection
     {
         services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+
+        services.AddHttpContextAccessor();
+        services.AddScoped<ITenantContext, TenantContextService>();
 
         return services;
     }
