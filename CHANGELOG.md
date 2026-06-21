@@ -50,3 +50,17 @@ Migración AddUsers. `dotnet build` 0/0. Excepción de reflection documentada
 a mover a variable de entorno en Incremento 4.
 
 ---
+
+## 2026-06-19 — Incremento 4: aislamiento automático entre tenants
+
+Global query filter en EF Core aplicado automáticamente a toda subclase de
+TenantedEntity (reflexión una vez al construir el modelo, declarada como excepción
+intencional). El filtro lee ITenantContext.TenantId dinámicamente por request;
+con tenant null devuelve cero filas (fail-closed). SaveChangesAsync auto-asigna
+TenantId a entidades nuevas y lanza InvalidOperationException si no hay tenant
+(no guarda con Guid.Empty). NullTenantContext en DesignTimeDbContextFactory para
+las migraciones. Mecanismo documentado en ARCHITECTURE.md sección 3. `dotnet build`
+0/0. Salda la deuda de aislamiento declarada en Incrementos 2 y 3. Pendiente:
+verificación real del aislamiento, posible recién en Incremento 5 con Product.
+
+---
