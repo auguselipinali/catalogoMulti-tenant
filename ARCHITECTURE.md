@@ -74,12 +74,37 @@ Persistencia aplica el TenantId automáticamente
 
 - El `TenantId` viaja en el JWT, nunca en el body ni en parámetros enviados por
   el frontend.
-- La persistencia debe garantizar que **ninguna query devuelva datos de otro
-  tenant**, incluso si el desarrollador omite el filtro explícito. El mecanismo
-  concreto de EF Core para lograrlo se documenta en el código y en su ADR
-  correspondiente cuando se implemente.
-- Al crear una entidad de negocio, el `TenantId` se asigna automáticamente desde
-  el `ITenantContext`; el desarrollador no debería tener que setearlo a mano.
+**Mecanismo de aislamiento — Global Query Filter:**
+
+`AppDbContext` recibe `ITenantContext` por constructor (ambos Scoped, nueva
+instancia por request). En `OnModelCreating`, se iteran todos los tipos del modelo
+y, para cada uno que herede de `TenantedEntity`, se aplica via reflexión un
+`HasQueryFilter` con la expresión:
+
+```
+e => _tenantContext.TenantId.HasValue && e.TenantId == _tenantContext.TenantId!.Value
+```
+
+La expresión captura la **referencia** al objeto `_tenantContext`, no su valor:
+cada vez que EF Core ejecuta una query, evalúa `_tenantContext.TenantId` en ese
+momento y obtiene el TenantId del request en curso. La reflexión ocurre una sola
+vez al construir el modelo, no por query (excepción documentada, igual que el
+assembly scanning de MediatR/FluentValidation).
+
+**Comportamiento con tenant no resuelto:** si `ITenantContext.TenantId` es `null`
+(request sin JWT o con JWT inválido), `HasValue` es `false` → el filtro retorna
+`false` para todas las filas → cero resultados. Comportamiento seguro por diseño:
+sin contexto de tenant, el developer no ve datos de nadie en lugar de verlo todo.
+
+**`Tenant` y `User` quedan fuera del filtro** porque ninguno hereda de
+`TenantedEntity`: `Tenant` es infraestructura de la plataforma; `User` se resuelve
+por email antes de conocer el tenant (login).
+
+**Auto-asignación de `TenantId` en `SaveChanges`:** `AppDbContext` sobreescribe
+`SaveChangesAsync` para iterar las entidades `TenantedEntity` con estado `Added` y
+asignarles el `TenantId` desde `ITenantContext`. Si el contexto no tiene tenant
+resuelto al intentar persistir, se lanza `InvalidOperationException` explícita. El
+desarrollador no necesita setear `TenantId` al crear una entidad de negocio.
 
 **Identificación del tenant de cara al público:** por path (`/{slug}`) en esta
 fase. El slug es un campo del tenant. El mecanismo de resolución está aislado en

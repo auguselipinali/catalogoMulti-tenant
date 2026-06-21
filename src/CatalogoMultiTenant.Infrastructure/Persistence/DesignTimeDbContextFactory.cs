@@ -1,3 +1,4 @@
+using CatalogoMultiTenant.Application.Common.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
@@ -11,6 +12,13 @@ public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<AppDbConte
             .UseNpgsql("Host=localhost;Database=catalogo_dev;Username=postgres;Password=postgres")
             .Options;
 
-        return new AppDbContext(options);
+        return new AppDbContext(options, new NullTenantContext());
+    }
+
+    // Stub for design-time tools (migrations). No HTTP context available at that point.
+    private sealed class NullTenantContext : ITenantContext
+    {
+        public Guid? TenantId => null;
+        public string? TenantSlug => null;
     }
 }
