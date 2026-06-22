@@ -13,6 +13,7 @@ public class AppDbContext : DbContext, IAppDbContext
 
     public DbSet<Tenant> Tenants => Set<Tenant>();
     public DbSet<User> Users => Set<User>();
+    public DbSet<Product> Products => Set<Product>();
 
     public AppDbContext(DbContextOptions<AppDbContext> options, ITenantContext tenantContext)
         : base(options)
@@ -30,6 +31,7 @@ public class AppDbContext : DbContext, IAppDbContext
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfiguration(new TenantConfiguration());
         modelBuilder.ApplyConfiguration(new UserConfiguration());
+        modelBuilder.ApplyConfiguration(new ProductConfiguration());
 
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
         {
@@ -56,11 +58,18 @@ public class AppDbContext : DbContext, IAppDbContext
         foreach (var entry in ChangeTracker.Entries<TenantedEntity>()
                      .Where(e => e.State == EntityState.Added))
         {
-            if (!_tenantContext.TenantId.HasValue)
+            if (_tenantContext.TenantId.HasValue)
+            {
+                // Normal request: always set from context (prevents accidental cross-tenant writes).
+                entry.Entity.TenantId = _tenantContext.TenantId.Value;
+            }
+            else if (entry.Entity.TenantId == Guid.Empty)
+            {
+                // No context and no explicit TenantId set: developer forgot to assign it.
                 throw new InvalidOperationException(
                     "Cannot persist a TenantedEntity without a resolved TenantId in ITenantContext.");
-
-            entry.Entity.TenantId = _tenantContext.TenantId.Value;
+            }
+            // Context null + TenantId already set explicitly (e.g., seeder): allowed through.
         }
 
         return await base.SaveChangesAsync(cancellationToken);
