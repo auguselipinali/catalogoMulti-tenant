@@ -21,4 +21,12 @@ public class Product : TenantedEntity
             Description = description,
             ImageUrl = imageUrl
         };
+
+    public void Update(string name, decimal price, string? description, string? imageUrl)
+    {
+        Name = name;
+        Price = price;
+        Description = description;
+        ImageUrl = imageUrl;
+    }
 }
