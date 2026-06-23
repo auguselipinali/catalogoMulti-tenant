@@ -156,7 +156,77 @@ Ver sección 5 para el flujo de alto nivel.
 
 ---
 
-## 8. Pendientes de documentación
+## 8. Setup operativo
+
+### Requisitos
+
+- **.NET 8 SDK**
+- **Docker** (para levantar PostgreSQL sin instalación local)
+- **dotnet-ef** como herramienta global:
+  ```
+  dotnet tool install --global dotnet-ef
+  ```
+  La carpeta `~/.dotnet/tools` debe estar en el `PATH`. En Windows se agrega
+  automáticamente al instalar el SDK; si `dotnet ef` no responde, agregarla
+  manualmente.
+
+### Base de datos
+
+Sin necesidad de instalar PostgreSQL local:
+
+```bash
+docker run --name pg-catalogo \
+  -e POSTGRES_PASSWORD=postgres \
+  -e POSTGRES_DB=catalogo_dev \
+  -p 5432:5432 \
+  -d postgres
+```
+
+Si el contenedor ya existe: `docker start pg-catalogo`
+
+Esto matchea la connection string de desarrollo configurada en
+`appsettings.json` (`Host=localhost;Database=catalogo_dev;Username=postgres;Password=postgres`).
+
+### Nota sobre paquetes de WebApi
+
+`Microsoft.EntityFrameworkCore.Design` debe estar presente en
+`CatalogoMultiTenant.WebApi` en versión `8.0.x`. Versiones más nuevas (9.x, 10.x)
+apuntan a `net9.0`/`net10.0` y son incompatibles con este proyecto en `net8.0`.
+
+### Aplicar migraciones
+
+Desde la raíz del repositorio:
+
+```bash
+dotnet ef database update \
+  --project src/CatalogoMultiTenant.Infrastructure \
+  --startup-project src/CatalogoMultiTenant.WebApi
+```
+
+`--startup-project` es necesario porque la configuración de conexión vive en
+`appsettings.json` de WebApi, no en Infrastructure.
+
+### Levantar la API
+
+```bash
+dotnet run --project src/CatalogoMultiTenant.WebApi
+```
+
+Al arrancar, el seeder carga automáticamente los tenants de desarrollo (`lore`,
+`nova`) con sus productos de ejemplo.
+
+### Verificación rápida
+
+```
+GET http://localhost:{puerto}/lore/products
+```
+
+Debe devolver únicamente los productos de Lore Perfumería. Si aparecen
+productos de otro tenant, el aislamiento no está funcionando.
+
+---
+
+## 9. Pendientes de documentación
 
 > Esta sección lista lo que **todavía no está documentado**. Su contenido NO debe
 > inventarse: se completa inspeccionando el código real o cuando se toma la
@@ -165,7 +235,3 @@ Ver sección 5 para el flujo de alto nivel.
 
 - **Flujo de login y refresh token** — detalle fino, contra el código existente.
 - **Convenciones del repo** — nombres, feature folders, organización de carpetas.
-- **Setup operativo** — cómo levantar el proyecto localmente, variables de
-  entorno, cómo correr migraciones EF Core, cómo crear/seedear un tenant nuevo.
-  Es el conocimiento que hoy está solo en la cabeza del autor y el primero que se
-  pierde al sumar a alguien. Mantenerlo acá o en un futuro `CONTRIBUTING.md`.
