@@ -82,3 +82,18 @@ Deuda declarada: edge case de JWT de tenant A en URL de tenant B (a validar en
 Incremento 6). Setup operativo requiere paquete EFCore.Design 8.0.x en WebApi.
 
 ---
+
+## 2026-06-23 — Incremento 6: panel de administración (escritura protegida)
+
+Endpoints admin de escritura de productos bajo /admin (POST, PUT, DELETE),
+protegidos con [Authorize]. El TenantId sale exclusivamente del JWT, sin slug en
+la ruta — esto elimina por diseño el edge case de tenant cruzado declarado en el
+Incremento 5. Commands MediatR Create/Update/Delete con validators. Método Update
+en el dominio (mutación controlada). KeyNotFoundException → 404, sin jerarquía de
+excepciones custom (anti-sobreingeniería).
+
+AISLAMIENTO DE ESCRITURA VERIFICADO a mano de punta a punta: POST con JWT crea en
+el tenant correcto (201), producto visible solo en su tenant, PUT/DELETE sobre id
+de otro tenant da 404 (el filtro lo aísla), POST sin JWT da 401.
+
+---
