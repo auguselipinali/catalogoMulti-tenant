@@ -64,3 +64,21 @@ las migraciones. Mecanismo documentado en ARCHITECTURE.md sección 3. `dotnet bu
 verificación real del aislamiento, posible recién en Incremento 5 con Product.
 
 ---
+
+## 2026-06-23 — Incremento 5: módulo Catálogo (lectura pública) + aislamiento verificado
+
+Entidad `Product` (hereda de TenantedEntity, primera entidad de negocio bajo el
+global query filter). Resolución de tenant por slug en rutas públicas vía
+TenantSlugMiddleware + fallback en TenantContextService (prioridad: JWT > slug).
+GET público /{slug}/products. SaveChangesAsync refinado para permitir el seeder
+(TenantId explícito con contexto null). Segundo tenant "nova" en seed para probar
+aislamiento. Migración AddProducts.
+
+AISLAMIENTO VERIFICADO de punta a punta con dos tenants reales: /lore/products
+devuelve solo perfumería, /nova/products solo ropa, sin cruce de ids; slug
+inexistente da 404. Valida los Incrementos 2-3-4.
+
+Deuda declarada: edge case de JWT de tenant A en URL de tenant B (a validar en
+Incremento 6). Setup operativo requiere paquete EFCore.Design 8.0.x en WebApi.
+
+---
