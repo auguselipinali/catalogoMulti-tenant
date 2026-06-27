@@ -105,3 +105,14 @@ leído de appsettings.json (Cors:AllowedOrigins), no hardcodeado. UseCors ubicad
 antes de UseAuthentication. Habilita que el catálogo React consuma la API. Build 0/0.
 
 ---
+
+## 2026-06-27 — Renombre de slug: lore → caricias-al-alma
+
+El tenant pasa a slug `caricias-al-alma` y Name "Caricias al Alma". DataSeeder
+actualizado (guard por el slug nuevo para no duplicar; email admin@lore.com y
+productos sin cambios). Data migration RenameTenantLoreToCariciasAlAlma: UPDATE
+in-place de la fila existente (slug + name) por el slug viejo, mismo Id, productos
+preservados; reversible vía Down. La migración se aplica antes del arranque, así
+el guard del seeder encuentra la fila renombrada y no crea un duplicado. Build 0/0.
+
+---
