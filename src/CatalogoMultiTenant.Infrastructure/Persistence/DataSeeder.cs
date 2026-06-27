@@ -10,16 +10,16 @@ public static class DataSeeder
 {
     public static async Task SeedAsync(AppDbContext context, IPasswordHasher passwordHasher)
     {
-        await SeedLoreAsync(context, passwordHasher);
+        await SeedCariciasAlAlmaAsync(context, passwordHasher);
         await SeedNovaAsync(context, passwordHasher);
     }
 
-    private static async Task SeedLoreAsync(AppDbContext context, IPasswordHasher passwordHasher)
+    private static async Task SeedCariciasAlAlmaAsync(AppDbContext context, IPasswordHasher passwordHasher)
     {
-        if (await context.Tenants.AnyAsync(t => t.Slug == "lore"))
+        if (await context.Tenants.AnyAsync(t => t.Slug == "caricias-al-alma"))
             return;
 
-        var tenant = Tenant.Create("Lore Perfumería", "lore");
+        var tenant = Tenant.Create("Caricias al Alma", "caricias-al-alma");
         context.Tenants.Add(tenant);
         context.Users.Add(User.Create("admin@lore.com", passwordHasher.Hash("Admin@Lore123!"), tenant.Id));
 
