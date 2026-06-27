@@ -97,3 +97,11 @@ el tenant correcto (201), producto visible solo en su tenant, PUT/DELETE sobre i
 de otro tenant da 404 (el filtro lo aísla), POST sin JWT da 401.
 
 ---
+
+## 2026-06-23 — CORS para el frontend
+
+Política CORS nombrada en la WebApi que permite el origin del frontend Vite,
+leído de appsettings.json (Cors:AllowedOrigins), no hardcodeado. UseCors ubicado
+antes de UseAuthentication. Habilita que el catálogo React consuma la API. Build 0/0.
+
+---
