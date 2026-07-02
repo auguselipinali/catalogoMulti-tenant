@@ -116,3 +116,24 @@ preservados; reversible vía Down. La migración se aplica antes del arranque, a
 el guard del seeder encuentra la fila renombrada y no crea un duplicado. Build 0/0.
 
 ---
+
+## 2026-07-02 — Categorías multi-tenant (modelo + CRUD)
+
+Bloque de categorías en dos incrementos.
+
+Incremento 1 (modelo de datos): entidad `Category` (hereda de TenantedEntity,
+bajo el global query filter automáticamente) y `Product.CategoryId` nullable
+(los productos existentes quedan sin categoría, no se rompen). FK opcional con
+ON DELETE SET NULL. Migración AddCategories (tabla Categories + columna/índice/FK
+en Products).
+
+Incremento 2 (CRUD + asignación): CRUD de categorías bajo /admin/categories
+(POST/GET/PUT/DELETE, protegido con JWT, mismo patrón que products).
+CreateProduct/UpdateProduct aceptan CategoryId opcional con validación de
+aislamiento: AnyAsync sobre el DbSet ya filtrado por tenant — categoría de otro
+tenant es invisible → 404, nunca se guarda un producto con categoría ajena.
+GET público /{slug}/products expone CategoryId + CategoryName vía LEFT JOIN
+(DefaultIfEmpty, conserva productos sin categoría). Sin migración (modelo sin
+cambios). Build 0/0.
+
+---
