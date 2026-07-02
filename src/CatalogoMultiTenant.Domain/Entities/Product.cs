@@ -9,6 +9,7 @@ public class Product : TenantedEntity
     public decimal Price { get; private set; }
     public string? Description { get; private set; }
     public string? ImageUrl { get; private set; }
+    public Guid? CategoryId { get; private set; }
 
     private Product() { }
 
