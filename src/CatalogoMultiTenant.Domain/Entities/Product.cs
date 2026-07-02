@@ -13,21 +13,23 @@ public class Product : TenantedEntity
 
     private Product() { }
 
-    public static Product Create(string name, decimal price, string? description = null, string? imageUrl = null)
+    public static Product Create(string name, decimal price, string? description = null, string? imageUrl = null, Guid? categoryId = null)
         => new Product
         {
             Id = Guid.NewGuid(),
             Name = name,
             Price = price,
             Description = description,
-            ImageUrl = imageUrl
+            ImageUrl = imageUrl,
+            CategoryId = categoryId
         };
 
-    public void Update(string name, decimal price, string? description, string? imageUrl)
+    public void Update(string name, decimal price, string? description, string? imageUrl, Guid? categoryId)
     {
         Name = name;
         Price = price;
         Description = description;
         ImageUrl = imageUrl;
+        CategoryId = categoryId;
     }
 }

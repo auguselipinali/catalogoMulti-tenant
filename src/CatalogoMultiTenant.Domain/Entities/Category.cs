@@ -15,4 +15,6 @@ public class Category : TenantedEntity
             Id = Guid.NewGuid(),
             Name = name
         };
+
+    public void Rename(string name) => Name = name;
 }

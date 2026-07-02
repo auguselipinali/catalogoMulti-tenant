@@ -2,5 +2,5 @@ using MediatR;
 
 namespace CatalogoMultiTenant.Application.Features.Catalog.Commands.UpdateProduct;
 
-public record UpdateProductCommand(Guid Id, string Name, decimal Price, string? Description, string? ImageUrl)
+public record UpdateProductCommand(Guid Id, string Name, decimal Price, string? Description, string? ImageUrl, Guid? CategoryId)
     : IRequest;
