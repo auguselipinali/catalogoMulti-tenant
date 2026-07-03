@@ -13,5 +13,12 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
         builder.Property(p => p.Price).HasColumnType("numeric(18,2)");
         builder.Property(p => p.Description).HasMaxLength(2000);
         builder.Property(p => p.ImageUrl).HasMaxLength(1000);
+
+        // Optional FK to Category (no navigation). Same-tenant validation is an
+        // application-layer concern handled in the category CRUD increment.
+        builder.HasOne<Category>()
+            .WithMany()
+            .HasForeignKey(p => p.CategoryId)
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }

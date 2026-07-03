@@ -20,7 +20,18 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand>
         if (product is null)
             throw new KeyNotFoundException($"Product {request.Id} not found.");
 
-        product.Update(request.Name, request.Price, request.Description, request.ImageUrl);
+        if (request.CategoryId is Guid categoryId)
+        {
+            // _db.Categories is already scoped to the current tenant by the global
+            // query filter. A category from another tenant is invisible → rejected.
+            var belongsToTenant = await _db.Categories
+                .AnyAsync(c => c.Id == categoryId, cancellationToken);
+
+            if (!belongsToTenant)
+                throw new KeyNotFoundException($"Category {categoryId} not found.");
+        }
+
+        product.Update(request.Name, request.Price, request.Description, request.ImageUrl, request.CategoryId);
 
         await _db.SaveChangesAsync(cancellationToken);
     }
