@@ -1,0 +1,14 @@
+# Build artifacts (rebuilt inside the image)
+**/bin/
+**/obj/
+
+# Version control and IDE
+.git/
+.gitignore
+.vs/
+.vscode/
+*.user
+
+# Docker
+Dockerfile
+.dockerignore

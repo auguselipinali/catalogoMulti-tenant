@@ -28,6 +28,7 @@ app.UseMiddleware<TenantSlugMiddleware>();     // runs after auth (JWT already p
 
 app.MapControllers();
 
-await app.Services.SeedDevelopmentDataAsync();
+// Essential tenant seeds in all environments; demo data (Nova) only in Development.
+await app.Services.SeedDataAsync(includeDemoData: app.Environment.IsDevelopment());
 
 app.Run();

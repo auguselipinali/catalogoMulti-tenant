@@ -4,24 +4,36 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CatalogoMultiTenant.Infrastructure.Persistence;
 
-// Seed de desarrollo. Passwords de desarrollo: Admin@Lore123! / Admin@Nova123!
-// Cambiar por variables de entorno antes de producción.
+// Seed de datos. El tenant esencial (Caricias al Alma + admin) se siembra en TODOS
+// los entornos, incluido Production, de forma idempotente (guard por slug). La
+// password del admin viene de SEED_ADMIN_PASSWORD (fallback al valor de dev).
+// Nova Modas es data de demo y solo se siembra cuando includeDemoData = true
+// (Development), para no ensuciar la base productiva.
 public static class DataSeeder
 {
-    public static async Task SeedAsync(AppDbContext context, IPasswordHasher passwordHasher)
+    public static async Task SeedAsync(
+        AppDbContext context,
+        IPasswordHasher passwordHasher,
+        string adminPassword,
+        bool includeDemoData)
     {
-        await SeedCariciasAlAlmaAsync(context, passwordHasher);
-        await SeedNovaAsync(context, passwordHasher);
+        await SeedCariciasAlAlmaAsync(context, passwordHasher, adminPassword);
+
+        if (includeDemoData)
+            await SeedNovaAsync(context, passwordHasher);
     }
 
-    private static async Task SeedCariciasAlAlmaAsync(AppDbContext context, IPasswordHasher passwordHasher)
+    private static async Task SeedCariciasAlAlmaAsync(
+        AppDbContext context,
+        IPasswordHasher passwordHasher,
+        string adminPassword)
     {
         if (await context.Tenants.AnyAsync(t => t.Slug == "caricias-al-alma"))
             return;
 
         var tenant = Tenant.Create("Caricias al Alma", "caricias-al-alma");
         context.Tenants.Add(tenant);
-        context.Users.Add(User.Create("admin@lore.com", passwordHasher.Hash("Admin@Lore123!"), tenant.Id));
+        context.Users.Add(User.Create("admin@lore.com", passwordHasher.Hash(adminPassword), tenant.Id));
 
         // TenantId set explicitly: seeder runs without HTTP context (ITenantContext.TenantId is null).
         // SaveChangesAsync allows this when TenantId is already set and context is null.
