@@ -49,11 +49,16 @@ public static class DependencyInjection
         return services;
     }
 
-    public static async Task SeedDevelopmentDataAsync(this IServiceProvider services)
+    public static async Task SeedDataAsync(this IServiceProvider services, bool includeDemoData)
     {
         using var scope = services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         var passwordHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
-        await DataSeeder.SeedAsync(context, passwordHasher);
+        var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+
+        // Production sets SEED_ADMIN_PASSWORD via env var; dev falls back to the known value.
+        var adminPassword = configuration["SEED_ADMIN_PASSWORD"] ?? "Admin@Lore123!";
+
+        await DataSeeder.SeedAsync(context, passwordHasher, adminPassword, includeDemoData);
     }
 }

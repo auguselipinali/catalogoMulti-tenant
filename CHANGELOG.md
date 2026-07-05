@@ -137,3 +137,22 @@ GET público /{slug}/products expone CategoryId + CategoryName vía LEFT JOIN
 cambios). Build 0/0.
 
 ---
+
+## 2026-07-02 — Dockerfile para Render + seeding de producción
+
+Dockerfile multi-stage (sdk build → aspnet runtime) con restore cacheado por
+capa. Kestrel escucha en 0.0.0.0:${PORT:-8080} vía entrypoint shell-form, así
+respeta el PORT dinámico de Render; exec entrega el proceso a dotnet para el
+SIGTERM. .dockerignore excluye bin/obj/.git del build context.
+
+Seeding separado en esencial vs demo: Caricias al Alma + admin se siembra en
+TODOS los entornos (idempotente por slug), Nova Modas solo con includeDemoData
+(Development, gate por app.Environment.IsDevelopment()). La password del admin
+pasa a leerse de la env var SEED_ADMIN_PASSWORD (fallback al valor de dev): ya no
+hay credencial real hardcodeada en el repo. Rename SeedDevelopmentDataAsync →
+SeedDataAsync (corre también en producción). Build 0/0.
+
+Deploy en Render: cargar ConnectionStrings__DefaultConnection, SEED_ADMIN_PASSWORD,
+Jwt__SecretKey y Cors__AllowedOrigins como env vars del servicio.
+
+---
