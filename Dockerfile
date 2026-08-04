@@ -24,6 +24,11 @@ WORKDIR /app
 COPY --from=build /app/publish ./
 
 ENV ASPNETCORE_ENVIRONMENT=Production
+# Memory tuning for constrained hosts (Render free tier, 512MB). Workstation GC
+# uses less RAM than Server GC; GCConserveMemory=9 makes the GC free memory more
+# aggressively (0-9 scale).
+ENV DOTNET_gcServer=0
+ENV DOTNET_GCConserveMemory=9
 # Documented default; Render overrides the actual port via the PORT env var below.
 EXPOSE 8080
 
